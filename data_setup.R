@@ -16,7 +16,7 @@ data <- data %>%
 
 # set up time as numerical value (hour.minute)
 hour <- substring(data$time, 1, 2)
-hour[substring(data$time, 10, 11) == "PM"] <- hour[substring(data$time, 10, 11) == "PM"] + 12
+hour[substring(data$time, 10, 11) == "PM"] <- as.numeric(hour[substring(data$time, 10, 11) == "PM"]) + 12
 
 data$time <- as.numeric(paste0(hour, ".", substring(data$time, 4, 5)))
 
