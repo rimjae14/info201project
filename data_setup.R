@@ -2,6 +2,7 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(maps)
+library(tidyr)
 
 # set up data
 data <- read.csv("data/cleaned_seattle_police_data.csv", stringsAsFactors = FALSE)
@@ -14,10 +15,56 @@ data <- data %>%
   )
 
 # set up time as numerical value (hour.minute)
-if (substring(data$time, 10, 11) == "PM") {
-  hour <- as.numeric(substring(data$time, 1, 2)) + 12
-} else {
-  hour <- substring(data$time, 1, 2)
-}
-data$time <- as.numeric(paste0(hour, ".", substring(data$time, 4, 5)))
+suppressWarnings(
+  if (substring(data$time, 10, 11) == "PM") {
+    hour <- as.numeric(substring(data$time, 1, 2)) + 12
+  } else {
+    hour <- substring(data$time, 1, 2)
+  }
+)
+suppressWarnings(data$time <- as.numeric(paste0(hour, ".", substring(data$time, 4, 5))))
 
+# set up sector data: exclude sector H
+data <- data %>% 
+  filter(District.Sector %in% c(
+    "N", "L", "J", "B", "U", "O", "R","S", "K",
+    "M", "D", "Q", "C", "E", "G", "F", "W")
+  )
+
+
+# QUESTION 4
+accident_data <- data %>%
+  filter(Event.Clearance.Group == "MOTOR VEHICLE COLLISION INVESTIGATION")
+
+
+# WIDGETS
+# times for accidents
+time_range <- range(accident_data$time)
+
+# districts
+districts <- data %>% 
+  distinct(District.Sector)
+districts <- districts$District.Sector
+
+
+
+
+#accident_data_test <- accident_data %>% 
+ # filter(District.Sector == "M") %>% 
+  #arrange(time) %>% 
+  #mutate(time.round = floor(time))
+
+#ggplot(data = accident_data_test) +
+ #geom_point(mapping = aes(x = Latitude, y = Longitude))
+
+#counts <- count(accident_data_test, vars = time.round)
+#accident_data_test <- left_join(accident_data_test, counts, by = c("time" = "vars"))
+#View(counts)
+
+#accident_data_test <- accident_data_test %>% 
+#  distinct(n, .keep_all = TRUE)
+
+
+
+#ggplot(data = accident_data_test) +
+ # geom_point(mapping = aes(x = time, y ))
