@@ -47,24 +47,3 @@ districts <- data %>%
 districts <- districts$District.Sector
 
 
-
-
-#accident_data_test <- accident_data %>% 
- # filter(District.Sector == "M") %>% 
-  #arrange(time) %>% 
-  #mutate(time.round = floor(time))
-
-#ggplot(data = accident_data_test) +
- #geom_point(mapping = aes(x = Latitude, y = Longitude))
-
-#counts <- count(accident_data_test, vars = time.round)
-#accident_data_test <- left_join(accident_data_test, counts, by = c("time" = "vars"))
-#View(counts)
-
-#accident_data_test <- accident_data_test %>% 
-#  distinct(n, .keep_all = TRUE)
-
-
-
-#ggplot(data = accident_data_test) +
- # geom_point(mapping = aes(x = time, y ))
