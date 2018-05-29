@@ -1,7 +1,8 @@
-source("data_setup.R")
+library(shiny)
+source("question2_data.R")
 
-server <- function(input, output) {
+my_server <- function(input, output) {
 
 }
 
-shinyServer(server)
+shinyServer(my_server)
