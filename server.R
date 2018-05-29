@@ -21,7 +21,7 @@ server <- function(input, output) {
   data$selected_time <- ""
   
   # click interaction: graph two
-  #data$selected_location <- ""
+  data$selected_location <- ""
   data$selected_time_two <- ""
   data$selected_dist <- ""
 
@@ -65,7 +65,7 @@ server <- function(input, output) {
       ggplot(data = filtered_acc_plot()) +
         geom_point(mapping = aes(
           x = Longitude, y = Latitude,
-          color = (District.Sector == data$selected_dist)
+          color = (Hundred.Block.Location == data$selected_location)
         ), size = 1.5) +
         guides(color = FALSE) +
         coord_equal()
@@ -73,9 +73,9 @@ server <- function(input, output) {
   })
   
   #click interaction: graph two
-  #output$location <- renderText({
-  #  data_selected_location
-  #})
+  output$location <- renderText({
+    paste(unique(tolower(data$selected_location)), collapse = ",    ")
+  })
   
   output$num_selected <- renderText({
     length(data$selected_time_two)
@@ -91,7 +91,7 @@ server <- function(input, output) {
   
   observeEvent(input$plot_click_map, {
     selected <- nearPoints(filtered_acc_plot(), input$plot_click_map)
-    #data$selected_location <- selected$HUNDREDBLOCKLOCATION
+    data$selected_location <- selected$Hundred.Block.Location
     data$selected_time_two <- selected$time
     data$selected_dist <- selected$District.Sector[1]
   })

@@ -20,9 +20,9 @@ ui <- fluidPage(
       
       h3("Seattle District Mapping of Accidents"),
       plotOutput('acc_graph_two', click = "plot_click_map"),
-      #textOutput('location'),
       p(strong("District: "), textOutput('select_dist', inline = TRUE)),
       p(strong("Number of Accidents: "), textOutput('num_selected', inline = TRUE)),
+      p(strong("Hundred Block Location: "), textOutput('location', inline = TRUE)),
       p(strong("Time(s): "), textOutput('select_time_two', inline = TRUE))
     )
   )
