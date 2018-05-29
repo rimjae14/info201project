@@ -22,7 +22,7 @@ server <- function(input, output) {
   
   # click interaction: graph two
   data$selected_location <- ""
-  data$selected_time_two <- ""
+  data$selected_time_two <- NULL
   data$selected_dist <- ""
 
   
@@ -74,11 +74,13 @@ server <- function(input, output) {
   
   #click interaction: graph two
   output$location <- renderText({
-    paste(unique(tolower(data$selected_location)), collapse = ",    ")
+    paste(unique(tolower(data$selected_location)), collapse = ", ")
   })
   
   output$num_selected <- renderText({
-    length(data$selected_time_two)
+    if (!is.null(data$selected_time_two)) {
+      length(data$selected_time_two)
+    }
   })
   
   output$select_time_two <- renderText({

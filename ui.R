@@ -9,7 +9,7 @@ ui <- fluidPage(
       ),
       checkboxGroupInput(
         'district', label = "District",
-        choices = districts
+        choices = districts, selected = "S"
       )
     ),
     mainPanel(
