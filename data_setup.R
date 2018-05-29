@@ -1,6 +1,15 @@
+library(shiny)
+library(ggplot2)
 library(dplyr)
+library(maps)
 
-data <- read.csv(file = "data/Seattle_Police_Department_911_Incident_Response.csv", stringsAsFactors = FALSE)
+######## DATA CLEANING: results in dataset on GitHub
+# COMMENT OUT EVERYTHING USED TO DO DATA CLEANING AFTER FIX TIME COLUMN
+
+data <- read.csv(
+  file = "data/Seattle_Police_Department_911_Incident_Response.csv",
+  stringsAsFactors = FALSE
+)
 
 cleaned <- data %>%
   select(Event.Clearance.Group, Event.Clearance.Date, Zone.Beat, Hundred.Block.Location,
@@ -29,3 +38,8 @@ random <- round(runif(200000, min = 0, max = nrow(clean)))
 cleaning <- clean[-random,]
 
 write.csv(cleaning, file = "data/last5_seattle_police_data.csv", na = "", row.names = FALSE)
+
+##### END OF DATA CLEANING
+
+
+
