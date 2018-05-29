@@ -28,17 +28,18 @@ server <- function(input, output) {
   
   # GRAPH ONE
   output$acc_graph_one <- renderPlot({
-    ggplot(data = filtered_acc_plot_one()) +
-      geom_point(mapping = aes(
-        x = vars, y = n,
-        color = (vars == data$selected_time)
-      ), size = 3) +
-      guides(color = FALSE) +
-      labs(
-        y = "Count of traffic accidents",
-        x = "Time (hour)"
-      ) 
-
+    if (!is.null(input$district)) {  
+      ggplot(data = filtered_acc_plot_one()) +
+        geom_point(mapping = aes(
+          x = vars, y = n,
+          color = (vars == data$selected_time)
+        ), size = 3) +
+        guides(color = FALSE) +
+        labs(
+          y = "Count of traffic accidents",
+          x = "Time (hour)"
+        ) 
+    }
   })
   
   # click interaction: graph one
@@ -60,13 +61,15 @@ server <- function(input, output) {
   
   # GRAPH TWO
   output$acc_graph_two <- renderPlot({
-    ggplot(data = filtered_acc_plot()) +
-      geom_point(mapping = aes(
-        x = Longitude, y = Latitude,
-        color = (District.Sector == data$selected_dist)
-      ), size = 1.5) +
-      guides(color = FALSE) +
-      coord_equal()
+    if (!is.null(input$district)) {
+      ggplot(data = filtered_acc_plot()) +
+        geom_point(mapping = aes(
+          x = Longitude, y = Latitude,
+          color = (District.Sector == data$selected_dist)
+        ), size = 1.5) +
+        guides(color = FALSE) +
+        coord_equal()
+    }
   })
   
   #click interaction: graph two
