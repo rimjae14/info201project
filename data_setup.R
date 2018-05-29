@@ -23,12 +23,15 @@ cleaned <- cleaned %>%
   )
 
 # set up time as numerical value (hour.minute)
-if (substring(data$time, 10, 11) == "PM") {
-  hour <- as.numeric(substring(data$time, 1, 2)) + 12
-} else {
-  hour <- substring(data$time, 1, 2)
+hour_24 <- function(time) {
+  if (substring(time, 10, 11) == "PM") {
+    hour <- as.numeric(substring(time, 1, 2)) + 12
+  } else {
+    hour <- substring(time, 1, 2)
+  }
+  as.numeric(paste0(hour, ".", substring(time, 4, 5)))
 }
-cleaned$time <- as.numeric(paste0(hour, ".", substring(data$time, 4, 5)))
+cleaned$time <- sapply(cleaned$time, hour_24)
 
 clean <- cleaned %>%
   filter(year == "2014" | year == "2015" | year == "2016" | year == "2017"| year == "2018")
