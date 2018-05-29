@@ -1,6 +1,6 @@
-source("data_setup.R")
+source("question2_data.R")
 
-server <- function(input, output) {
+my_server <- function(input, output) {
   filtered_acc_plot <- reactive({
     accident_graph_data <- accident_data %>% 
       filter(input$time[1] < time, input$time[2] > time) %>% 
@@ -12,7 +12,6 @@ server <- function(input, output) {
     count(filtered_acc_plot(), vars = time.round)
   })
   
-
   data <- reactiveValues()
   
   # click interaction: graph one
@@ -97,7 +96,6 @@ server <- function(input, output) {
     data$selected_time_two <- selected$time
     data$selected_dist <- selected$District.Sector[1]
   })
-  
 }
 
-shinyServer(server)
+shinyServer(my_server)
