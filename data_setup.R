@@ -1,12 +1,12 @@
-library(shiny)
-library(ggplot2)
 library(dplyr)
-library(maps)
 
-# set up data
-data <- read.csv("data/cleaned_seattle_police_data.csv", stringsAsFactors = FALSE)
+data <- read.csv(file = "data/Seattle_Police_Department_911_Incident_Response.csv", stringsAsFactors = FALSE)
 
-data <- data %>% 
+cleaned <- data %>%
+  select(Event.Clearance.Group, Event.Clearance.Date, Zone.Beat, Hundred.Block.Location,
+         District.Sector, Longitude, Latitude)
+
+cleaned <- cleaned %>% 
   mutate(
     date = substring(data$Event.Clearance.Date, 1, 10),
     year = substring(data$Event.Clearance.Date, 7, 10),
@@ -19,5 +19,13 @@ if (substring(data$time, 10, 11) == "PM") {
 } else {
   hour <- substring(data$time, 1, 2)
 }
-data$time <- as.numeric(paste0(hour, ".", substring(data$time, 4, 5)))
+cleaned$time <- as.numeric(paste0(hour, ".", substring(data$time, 4, 5)))
 
+clean <- cleaned %>%
+  filter(year == "2014" | year == "2015" | year == "2016" | year == "2017"| year == "2018")
+
+random <- round(runif(200000, min = 0, max = nrow(clean)))
+
+cleaning <- clean[-random,]
+
+write.csv(cleaning, file = "data/last5_seattle_police_data.csv", na = "", row.names = FALSE)
