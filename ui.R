@@ -25,11 +25,16 @@ ui <- fluidPage(
       tabsetPanel(type = 'tabs',
                   tabPanel('Plot',
                            h1("Crime Frequency Map"),
+                           textOutput("plot_description"),
                            plotOutput('map', click = "plot_click"),
                            verbatimTextOutput("info"),
-                           p(strong("District:"), textOutput("plot_description")),
+                           p(strong("District:"), textOutput("district_point", inline = TRUE)),
+                           p(strong("Frequency:"), textOutput("frequency_district", inline = TRUE)),
                            br(),
-                           leafletOutput('interactive_map')
+                           textOutput("plot_interactive"),
+                           leafletOutput('interactive_map'),
+                           p(strong("5 Districts With The Most Crimes:"), tableOutput("most_dangerous")),
+                           p(strong("5 Districts With The Least Crimes:"), tableOutput("most_safe"))
                   )
       )
     )
