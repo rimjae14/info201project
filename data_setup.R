@@ -2,6 +2,11 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(maps)
+library(tidyr)
+library(plotly)
+library(DT)
+library(leaflet)
+
 
 ######## DATA CLEANING: results in dataset on GitHub
 
@@ -43,5 +48,43 @@ library(maps)
 
 ##### END OF DATA CLEANING
 
+
+
+data <- read.csv("data/last5_seattle_police_data.csv", stringsAsFactors = FALSE)
+
+# set up sector data: exclude sector H
+data <- data %>% 
+  filter(District.Sector %in% c(
+    "N", "L", "J", "B", "U", "O", "R","S", "K",
+    "M", "D", "Q", "C", "E", "G", "F", "W")
+  )
+
+
+# QUESTION 1
+major_crimes <- c(
+  "ASSAULTS",
+  "BURGLARY",
+  "HOMICIDE",
+  "NARCOTICS COMPLAINTS",
+  "PROSTITUTION",
+  "PROPERTY DAMAGE",
+  "ROBBERY"
+)
+unique_districts <- unique(data$District.Sector)
+major_crime_data <- data %>% filter(Event.Clearance.Group %in% major_crimes)
+min_year <- min(as.numeric(data$year), na.rm = TRUE)
+max_year <- max(as.numeric(data$year), na.rm = TRUE)
+
+
+
+# QUESTION 4
+accident_data <- data %>%
+  filter(Event.Clearance.Group == "MOTOR VEHICLE COLLISION INVESTIGATION")
+
+# WIDGETS
+# districts
+districts <- data %>% 
+  distinct(District.Sector)
+districts <- districts$District.Sector
 
 

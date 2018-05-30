@@ -1,32 +1,36 @@
 library(shiny)
-library(plotly)
-library(DT)
-library(leaflet)
-
-# Data source
-data <- read.csv(file = "data/last5_seattle_police_data.csv", stringsAsFactors = FALSE)
-
-#Question 1 setup
-major_crimes <- c(
-  "ASSAULTS",
-  "BURGLARY",
-  "HOMICIDE",
-  "NARCOTICS COMPLAINTS",
-  "PROSTITUTION",
-  "PROPERTY DAMAGE",
-  "ROBBERY"
-)
-unique_districts <- unique(data$District.Sector)
-major_crime_data <- data %>% filter(Event.Clearance.Group %in% major_crimes)
-min_year <- min(as.numeric(data$year), na.rm = TRUE)
-max_year <- max(as.numeric(data$year), na.rm = TRUE)
-
-#Question 2 set up
+# Question 2 set up
 source("question2_data.R")
+
+# Question 1 and 4 set up
+source("data_setup.R")
 
 
 my_server <- function(input, output) {
+  filtered_acc_plot <- reactive({
+    accident_graph_data <- accident_data %>% 
+      filter(input$time[1] < time, input$time[2] > time) %>% 
+      filter(input$district ==  District.Sector) %>% 
+      mutate(time.round = floor(time))
+  })
+  
+  filtered_acc_plot_one <- reactive({
+    count(filtered_acc_plot(), vars = time.round)
+  })
+  
+  data <- reactiveValues()
+  
+  # click interaction: graph one
+  data$selected_time_one <- ""
+  data$selected_freq <- ""
+  data$selected_time <- ""
+  
+  # click interaction: graph two
+  data$selected_location <- ""
+  data$selected_time_two <- NULL
+  data$selected_dist <- ""
 
+  
   #################### Question 1 ####################
   ####################################################
   filtered_major_crime_data <- reactive({
@@ -174,11 +178,10 @@ my_server <- function(input, output) {
   q4data$selected_time_two <- NULL
   q4data$selected_dist <- ""
   
-  
   # GRAPH ONE
   output$acc_graph_one <- renderPlot({
     if (!is.null(input$district)) {  
-      ggplot(q4data = filtered_acc_plot_one()) +
+      ggplot(data = filtered_acc_plot_one()) +
         geom_point(mapping = aes(
           x = vars, y = n,
           color = (vars == q4data$selected_time)
@@ -199,6 +202,14 @@ my_server <- function(input, output) {
   output$freq <- renderText({
     q4data$selected_freq
   })
+    
+  output$acc_time_description <- renderText({
+    paste(
+      "This analysis is done given the range of time between ", input$time[1],
+      "and", input$time[2], "times of day (hour.minute), and the following district(s):",
+      paste(input$district, collapse = ", "), "."
+    )
+  })
   
   observeEvent(input$plot_click_time, {
     selected <- nearPoints(filtered_acc_plot_one(), input$plot_click_time)
@@ -211,7 +222,7 @@ my_server <- function(input, output) {
   # GRAPH TWO
   output$acc_graph_two <- renderPlot({
     if (!is.null(input$district)) {
-      ggplot(q4data = filtered_acc_plot()) +
+      ggplot(data = filtered_acc_plot()) +
         geom_point(mapping = aes(
           x = Longitude, y = Latitude,
           color = (Hundred.Block.Location == q4data$selected_location)
@@ -246,7 +257,6 @@ my_server <- function(input, output) {
     q4data$selected_time_two <- selected$time
     q4data$selected_dist <- selected$District.Sector[1]
   })
-  
 }
 
 shinyServer(my_server)
