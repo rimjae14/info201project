@@ -9,9 +9,9 @@ data <- read.csv("data/cleaned_seattle_police_data.csv", stringsAsFactors = FALS
 data <- data %>%
   mutate(
          date = substring(data$Event.Clearance.Date, 1, 10),
-         year = substring(data$Event.Clearance.Date, 7, 10),
+         year = as.numeric(substring(data$Event.Clearance.Date, 7, 10)),
          time = substring(data$Event.Clearance.Date, 12, 22),
-         month = substring(data$Event.Clearance.Date, 1, 2)
+         month = as.numeric(substring(data$Event.Clearance.Date, 1, 2))
          )
 
 # set up time as numerical value (hour.minute)
