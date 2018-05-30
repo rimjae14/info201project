@@ -6,6 +6,7 @@ library(tidyr)
 library(plotly)
 library(DT)
 library(leaflet)
+library(shinythemes)
 
 
 ######## DATA CLEANING: results in dataset on GitHub
