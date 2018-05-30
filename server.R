@@ -1,32 +1,36 @@
 library(shiny)
-library(plotly)
-library(DT)
-library(leaflet)
-
-# Data source
-data <- read.csv(file = "data/last5_seattle_police_data.csv", stringsAsFactors = FALSE)
-
-#Question 1 setup
-major_crimes <- c(
-  "ASSAULTS",
-  "BURGLARY",
-  "HOMICIDE",
-  "NARCOTICS COMPLAINTS",
-  "PROSTITUTION",
-  "PROPERTY DAMAGE",
-  "ROBBERY"
-)
-unique_districts <- unique(data$District.Sector)
-major_crime_data <- data %>% filter(Event.Clearance.Group %in% major_crimes)
-min_year <- min(as.numeric(data$year), na.rm = TRUE)
-max_year <- max(as.numeric(data$year), na.rm = TRUE)
-
-#Question 2 set up
+# Question 2 set up
 source("question2_data.R")
+
+# Question 1 and 4 set up
+source("data_setup.R")
 
 
 my_server <- function(input, output) {
+  filtered_acc_plot <- reactive({
+    accident_graph_data <- accident_data %>% 
+      filter(input$time[1] < time, input$time[2] > time) %>% 
+      filter(input$district ==  District.Sector) %>% 
+      mutate(time.round = floor(time))
+  })
+  
+  filtered_acc_plot_one <- reactive({
+    count(filtered_acc_plot(), vars = time.round)
+  })
+  
+  data <- reactiveValues()
+  
+  # click interaction: graph one
+  data$selected_time_one <- ""
+  data$selected_freq <- ""
+  data$selected_time <- ""
+  
+  # click interaction: graph two
+  data$selected_location <- ""
+  data$selected_time_two <- NULL
+  data$selected_dist <- ""
 
+  
   #################### Question 1 ####################
   ####################################################
   filtered_major_crime_data <- reactive({
@@ -96,6 +100,7 @@ my_server <- function(input, output) {
   
   #################### Question 3 ####################
   ####################################################
+  
   data_filter <- reactive({
     data_type <- data %>%
       filter(year == input$year) %>%
@@ -105,17 +110,20 @@ my_server <- function(input, output) {
   
   freq_filter <- reactive({
     freq_table <- as.data.frame(table(data_filter()[ , "District.Sector"]))
+    colnames(freq_table) <- c("District", "Freq")
+    return(freq_table)
   })
   
   district_filter <- reactive({
-    district_join <- inner_join(data_filter(), freq_filter(), by = c("District.Sector" = "Var1"))
+    district_join <- inner_join(data_filter(), freq_filter(), by = c("District.Sector" = "District"))
+    return(district_join)
   })
   
   freq_district <- reactive({
     breakpoints = c(0, 50, 100, 150, 200, 250, 300)
     freq_district <- district_filter() %>%
       mutate(Frequency = cut(district_filter()$Freq, breaks = breakpoints)) %>%
-      filter(Freq != 'NA')
+      filter(Frequency != 'NA')
   })
   
   
@@ -128,24 +136,60 @@ my_server <- function(input, output) {
     return(plot)
   })
   
-  output$info <- renderPrint({
+  clicked <- reactive({
     clicked <- nearPoints(freq_district(), input$plot_click)
-    paste("District:", clicked$District.Sector[1], "Frequency:", clicked$Freq[1])
+  })
+  
+  output$district_point <- renderText({
+    paste(clicked()$District.Sector[1])
+  })
+  
+  output$frequency_district <- renderText({
+    paste(clicked()$Freq[1])
   })
   
   
   output$plot_description <- renderText({
     map_description <- paste0("This map shows the frequency of certain crimes compared in
                               different districts. As the gradient darkens, the frequency
-                              of crimes are increased.")
+                              of crimes are increased. Using this data, determining the safest
+                              areas around Seattle can be inferred by the frequency of crimes in 
+                              the districts. Users are able to click on the points 
+                              to view the frequency count of crime in different districts.")
     return(map_description)
   })
   
   output$interactive_map <- renderLeaflet({
+    districts <- colorFactor(c("navy", "red"), domain = c("ship", "pirate"))
     map_interactive <- leaflet() %>%
       addTiles() %>%
-      addMarkers(lng = data_filter()$Longitude, lat = data_filter()$Latitude)
+      addCircleMarkers(fillOpacity = 0.5,
+                       lng = data_filter()$Longitude, lat = data_filter()$Latitude, popup = data_filter()$District.Sector)
     return(map_interactive) 
+  })
+  
+  output$plot_interactive <- renderText({
+    interactive_description <- paste0("This map also shows the frequency of certain crimes compared in
+                              different districts. However, this map provides a different visualization
+                              by providing a map of the city. Each point on the map represents a data point,
+                              and the density of points in certain locations of the map provides users with
+                              a visual of the crime counts. Users are able to click on the points 
+                              to view the different districts.")
+    return(interactive_description)
+  })
+  
+  output$most_dangerous <- renderTable({
+    most_dangerous <- freq_filter() %>%
+      arrange(desc(Freq)) %>%
+      select(District, Freq)
+    head(most_dangerous, 5)
+  })
+  
+  output$most_safe <- renderTable({
+    most_safe <- freq_filter() %>%
+      arrange(Freq) %>%
+      select(District, Freq)
+    head(most_safe, 5)
   })
   
   #################### Question 4 ####################
@@ -174,11 +218,10 @@ my_server <- function(input, output) {
   q4data$selected_time_two <- NULL
   q4data$selected_dist <- ""
   
-  
   # GRAPH ONE
   output$acc_graph_one <- renderPlot({
     if (!is.null(input$district)) {  
-      ggplot(q4data = filtered_acc_plot_one()) +
+      ggplot(data = filtered_acc_plot_one()) +
         geom_point(mapping = aes(
           x = vars, y = n,
           color = (vars == q4data$selected_time)
@@ -199,6 +242,14 @@ my_server <- function(input, output) {
   output$freq <- renderText({
     q4data$selected_freq
   })
+    
+  output$acc_time_description <- renderText({
+    paste(
+      "This analysis is done given the range of time between ", input$time[1],
+      "and", input$time[2], "times of day (hour.minute), and the following district(s):",
+      paste(input$district, collapse = ", "), "."
+    )
+  })
   
   observeEvent(input$plot_click_time, {
     selected <- nearPoints(filtered_acc_plot_one(), input$plot_click_time)
@@ -211,7 +262,7 @@ my_server <- function(input, output) {
   # GRAPH TWO
   output$acc_graph_two <- renderPlot({
     if (!is.null(input$district)) {
-      ggplot(q4data = filtered_acc_plot()) +
+      ggplot(data = filtered_acc_plot()) +
         geom_point(mapping = aes(
           x = Longitude, y = Latitude,
           color = (Hundred.Block.Location == q4data$selected_location)
@@ -246,7 +297,6 @@ my_server <- function(input, output) {
     q4data$selected_time_two <- selected$time
     q4data$selected_dist <- selected$District.Sector[1]
   })
-  
 }
 
 shinyServer(my_server)

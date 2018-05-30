@@ -1,15 +1,18 @@
-library(shiny)
-library(plotly)
-library(DT)
-library(leaflet)
+source("data_setup.R")
 
-data <- read.csv(file = "data/last5_seattle_police_data.csv", stringsAsFactors = FALSE)
 
-my_ui <- fluidPage(
+my_ui <- fluidPage(theme = shinytheme("yeti"),
   titlePanel("title of project"),
   p(em("our names")),
   navbarPage("Introduction of Project",
       p(em("introduction paragraph")),
+      p(paste(
+        "The data used in this report is from the Seattle Police Department",
+        "Incidence 912 Response data set. The data set can be found" 
+      ), a(
+        "here.",
+        href = 'https://data.seattle.gov/Public-Safety/Seattle-Police-Department-911-Incident-Response/3k2p-39jp'
+      )),
       tabPanel("Part 1",
         sidebarLayout(
           sidebarPanel(
@@ -85,61 +88,98 @@ my_ui <- fluidPage(
         )
       ),
       tabPanel("Part 3",
-        sidebarLayout(
-          sidebarPanel(
-            sliderInput('year',
-                        "Choose a year:",
-                        min = 2014,
-                        max = 2018,
-                        value = 2016,
-                        sep = ""),
-            selectInput('crime_type',
-                        "Select a crime",
-                        choices = list('Crimes' = c("ASSAULTS", "SHOPLIFTING", "BURGLARY",
-                                                    "PROPERTY DAMAGE", "PROSTITUTION", "ROBBERY",
-                                                    "AUTO THEFTS", "THREATS, HARASSMENT", "TRESPASS"))
-            )
-          ),
-          mainPanel(
-            tabsetPanel(type = 'tabs',
-                        tabPanel('Plot',
-                                 h1("Crime Frequency Map"),
-                                 plotOutput('map', click = "plot_click"),
-                                 verbatimTextOutput("info"),
-                                 p(strong("District:"), textOutput("plot_description")),
-                                 br(),
-                                 leafletOutput('interactive_map')
-                        )
-            )
-          )
-        )
-      ),
+               titlePanel("Crime Frequency"),
+               sidebarLayout(
+                 sidebarPanel(
+                   sliderInput('year',
+                               "Choose a year:",
+                               min = 2014,
+                               max = 2018,
+                               value = 2016,
+                               sep = ""),
+                   selectInput('crime_type',
+                               "Select a crime",
+                               choices = list('Crimes' = c("ASSAULTS", "SHOPLIFTING", "BURGLARY",
+                                                           "PROPERTY DAMAGE", "PROSTITUTION", "ROBBERY",
+                                                           "AUTO THEFTS", "THREATS, HARASSMENT", "TRESPASS")))
+                 ),
+                 mainPanel(
+                   tabsetPanel(type = 'tabs',
+                               tabPanel('Plot',
+                                        h1("Crime Frequency Map"),
+                                        textOutput("plot_description"),
+                                        plotOutput('map', click = "plot_click"),
+                                        verbatimTextOutput("info"),
+                                        p(strong("District:"), textOutput("district_point", inline = TRUE)),
+                                        p(strong("Frequency:"), textOutput("frequency_district", inline = TRUE)),
+                                        br(),
+                                        textOutput("plot_interactive"),
+                                        leafletOutput('interactive_map'),
+                                        p(strong("5 Districts With The Most Crimes:"), tableOutput("most_dangerous")),
+                                        p(strong("5 Districts With The Least Crimes:"), tableOutput("most_safe"))
+                               )
+                   )
+                 )
+               )
+             ),
       tabPanel("Part 4",
-        sidebarLayout(
-          sidebarPanel(
-              sliderInput(
-                  'time', label = "Time (hour.minute)",
-                  min = time_range[1], max = time_range[2], value = time_range),
-              checkboxGroupInput(
-                  'district', label = "District",
-                  choices = districts, selected = "S")
-          ),
-          mainPanel(
-              h3("Number of Traffic Accidents per Hour of Day"),
-              plotOutput('acc_graph_one', click = "plot_click_time"),
-              p(strong("Time: "), textOutput('select_time_one', inline = TRUE)),
-              p(strong("Number of Accidents: "), textOutput('freq', inline = TRUE)),
-                   
-              h3("Seattle District Mapping of Accidents"),
-              plotOutput('acc_graph_two', click = "plot_click_map"),
-              p(strong("District: "), textOutput('select_dist', inline = TRUE)),
-              p(strong("Number of Accidents: "), textOutput('num_selected', inline = TRUE)),
-              p(strong("Hundred Block Location: "), textOutput('location', inline = TRUE)),
-              p(strong("Time(s): "), textOutput('select_time_two', inline = TRUE))
-          )
-        )
+         sidebarLayout(
+           sidebarPanel(
+             sliderInput(
+               'time', label = "Time (hour.minute)",
+               min = 0, max = 24.59, value = c(0, 24.59)
+             ),
+             checkboxGroupInput(
+               'district', label = "District",
+               choices = districts, selected = "N"
+             )
+           ),
+           mainPanel(
+             h1("Seattle Traffic Accidents"),
+             
+             h3("Number of Traffic Accidents per Hour of Day"),
+             h4("What time of day is it most dangerous to drive in Seattle?"),
+             p(em("Click on a data point for its coordinates.")),
+             plotOutput('acc_graph_one', click = "plot_click_time"),
+             p(strong("Time: "), textOutput('select_time_one', inline = TRUE)),
+             p(strong("Number of Accidents: "), textOutput('freq', inline = TRUE)),
+             textOutput('acc_time_description'),
+             
+             h3("Seattle District Mapping of Accidents"),
+             h4("Where is it most dangerous to drive in Seattle?"),
+             p(em("Click on a data point for more information.")),
+             plotOutput('acc_graph_two', click = "plot_click_map"),
+             p(strong("District: "), textOutput('select_dist', inline = TRUE)),
+             p(strong("Number of Accidents: "), textOutput('num_selected', inline = TRUE)),
+             p(strong("Hundred Block Location: "), textOutput('location', inline = TRUE)),
+             p(strong("Time(s): "), textOutput('select_time_two', inline = TRUE)),
+             
+             
+             h3("Reference: Districts of Seattle"),
+             img(
+               src = 'https://www.seattle.gov/Documents/Departments/police/Precincts/maps/Southwest_Precinct.pdf',
+               width = "250", height = "285", inline = TRUE
+             ),
+             img(
+               src = 'https://www.seattle.gov/Documents/Departments/police/Precincts/maps/WestPrecinct.pdf',
+               width = "252", height = "285", inline = TRUE
+             ),
+             img(
+               src = 'https://www.seattle.gov/Documents/Departments/police/Precincts/maps/North_Precinct.pdf',
+               width = "252", height = "285", inline = TRUE
+             ),
+             img(
+               src = 'https://www.seattle.gov/Documents/Departments/police/Precincts/maps/East_Precinct.pdf',
+               width = "252", height = "285", inline = TRUE
+             ),
+             img(
+               src = 'https://www.seattle.gov/Documents/Departments/police/Precincts/maps/South_Precinct.pdf',
+               width = "252", height = "285", inline = TRUE
+             )
+           )
+         )
       )
-    )
+  )
 )
 
 shinyUI(my_ui)
