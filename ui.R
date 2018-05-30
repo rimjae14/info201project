@@ -79,7 +79,8 @@ my_ui <- fluidPage(
           mainPanel(
             #plot
             plotOutput("question2graph")
-            # insert image of precinct and district
+            #insert image of precinct and district
+            #analysis 
           )
         )
       ),
