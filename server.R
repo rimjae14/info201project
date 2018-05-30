@@ -1,4 +1,5 @@
 source("question2_data.R")
+source("data_setup.R")
 
 my_server <- function(input, output) {
   filtered_acc_plot <- reactive({
@@ -39,6 +40,14 @@ my_server <- function(input, output) {
           x = "Time (hour)"
         ) 
     }
+  })
+  
+  output$acc_time_description <- renderText({
+    paste(
+      "This analysis is done given the range of time between ", input$time[1],
+      "and", input$time[2], "times of day (hour.minute), and the following district(s):",
+      paste(input$district, collapse = ", "), "."
+    )
   })
   
   # click interaction: graph one

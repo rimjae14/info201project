@@ -62,9 +62,6 @@ accident_data <- data %>%
   filter(Event.Clearance.Group == "MOTOR VEHICLE COLLISION INVESTIGATION")
 
 # WIDGETS
-# times for accidents
-time_range <- range(accident_data$time)
-
 # districts
 districts <- data %>% 
   distinct(District.Sector)
