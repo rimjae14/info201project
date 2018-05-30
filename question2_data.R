@@ -43,9 +43,9 @@ south_crimes <- car_crimes %>%
 
 sector_data <- rbind(north_crimes, south_crimes, east_crimes, west_crimes, southwest_crimes)
 
+hour23 <- sector_data %>%
+  filter(round(time) == 23)
 
-
-car_plot <- ggplot(data = sector_data) +
+hour23plot <- ggplot(data = hour23) + 
   geom_bar(mapping = aes(x = sea_precinct))
 
-car_plot

@@ -11,10 +11,14 @@ my_ui <- fluidPage(
           sidebarPanel(
             sliderInput("q2hour", "Hour", min = 1, max = 24, value = 1)
           ),
-        mainPanel(
-          #plot
-        )
-        )
+          mainPanel(
+            #plot
+            plotOutput("question2graph"),
+            tableOutput('hours')
+          
+          )
+        
+          )
       ),
       tabPanel("Part 3"),
       tabPanel("Part 4"))
