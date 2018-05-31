@@ -71,8 +71,18 @@ major_crimes <- c(
   "PROPERTY DAMAGE",
   "ROBBERY"
 )
+
+
 unique_districts <- unique(data$District.Sector)
-major_crime_data <- data %>% filter(Event.Clearance.Group %in% major_crimes)
+
+month_extract <- function(s){
+  as.numeric(strsplit(s, "/")[[1]][1])
+}
+
+major_crime_data <- data %>%
+  filter(Event.Clearance.Group %in% major_crimes) %>%
+  mutate(month = sapply(date, month_extract))
+
 min_year <- min(as.numeric(data$year), na.rm = TRUE)
 max_year <- max(as.numeric(data$year), na.rm = TRUE)
 
