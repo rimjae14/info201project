@@ -3,20 +3,58 @@ source("data_setup.R")
 
 my_ui <- fluidPage(
   theme = shinytheme("yeti"),
-  titlePanel("title of project"),
-  p(em("our names")),
-  navbarPage(
-    "Introduction of Project",
-    p(em("introduction paragraph")),
+  titlePanel("Crimes in Seattle"),
+  p(em("INFO 201 Spring 2018")),
+  p(em("Meghan Frisch, Lena Duong, Yodae Lim, Jae Rim")),
+  navbarPage("Introduction of Project",
+    mainPanel(
+    img(src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Space_Needle002.jpg/1200px-Space_Needle002.jpg",
+        width = "800", height = "310", inline = TRUE),
+    h3("Questions we wanted to answer"),
+    p("1. Where and when are car thefts most concentrated in Seattle? The data set documents 
+      auto thefts in Seattle and provides the longitude and latitude of every crime, as well 
+      as the time these crimes are reported. This information allows us to analyze where and 
+      approximately when car thefts are most concentrated. This question is of interest because it 
+      informs individuals where and when they should be more careful about locking their car in 
+      the city."),
+    p("2. When is crime the highest? The data set documents 911 incident response, providing information
+      on when emergency services were at the event of the given crime. With this information, we 
+      can analyze the time of day and week when crimes are most concentrated, and can analyze these 
+      results across specific crimes (possibly using facet_wrap to do this, for example). This 
+      information tells individuals when they should be more conscious of a given crime occurring in 
+      Seattle, and make decisions accordingly."),
+    p("3. What are the safest areas of Seattle? The data set provides information on a multitude of 
+      crimes including armed robberies, assault, and narcotic use. Using information on these types
+      of crimes as well as the latitude and longitude given for these crimes, we can analyze where 
+      are the safest areas of Seattle. This information can be used by individuals for decisions on
+      where to raise a family in Seattle, or where to open a business."),
+    p("4. How has crime changed over time? The data set provides 911 response information over the 
+      last decade, allowing us to analyze how crime in Seattle has changed over time. This information 
+      informs emergency service individuals how the overall safety of Seattle has changed, and allows
+      for analysis on what events in time may have affected crime rates."),
+    p("5. What are the most dangerous intersections and highways? Included in this data set are traffic 
+      accidents and their locations (block and longitude & latitude). This analysis provides cautionary
+      information to individuals about which areas in Seattle have the highest rates of traffic accidents."),
+    hr(),
+    h3("About the data used:"),
+    p("	The data set we will be using for our final project will be 'Seattle Police Department 911 Incident
+        Response', provided and collected by the City of Seattle, Department of Information Technology, and 
+        the Seattle Police Department. It is available on the Seattle.gov website. It is in a CSV format that 
+        contains 1.48 million rows of 911 incidents reported from October 2010 to May 2018."),
+    p("There is a lot of data in this CSV, but we want to focus on location of incident, including district, 
+      longitude, latitude, initial description of incident, and initial type subgroup and initial type group 
+      that tells us what kind of crime that has been committed (auto theft, assault, robbery, ect), and the
+      'at scene time' of when first responders first appear at the scene. We want to focus on analyzing the 
+       relationship between different groups of crimes and location of the different parts of the city of 
+       Seattle. We know these data is available from the CSV by extracting the column names of the file."),
     p(paste(
       "The data used in this report is from the Seattle Police Department",
       "Incidence 911 Response data set. The data set can be found"
     ), a(
       "here.",
       href = "https://data.seattle.gov/Public-Safety/Seattle-Police-Department-911-Incident-Response/3k2p-39jp"
-    )),
-    tabPanel(
-      "Part 1",
+    ))),
+    tabPanel("Crime Over Time",
       sidebarLayout(
         sidebarPanel(
           # district selection widget and year slider
@@ -76,8 +114,7 @@ my_ui <- fluidPage(
         )
       )
     ),
-    tabPanel(
-      "Part 2",
+    tabPanel("Auto Crimes",
       sidebarLayout(
         sidebarPanel(
           h3("Control - Hour"),

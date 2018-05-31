@@ -43,11 +43,3 @@ south_crimes <- car_crimes %>%
 
 sector_data <- rbind(north_crimes, south_crimes, east_crimes, west_crimes, southwest_crimes)
   
-sum <- sector_data %>%
-  group_by(round(time)) %>%
-  summarize(min = min(time))
-
-View(sum)
-
-
-  
