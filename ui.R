@@ -149,6 +149,7 @@ my_ui <- fluidPage(
         ),
         mainPanel(
           h1("Seattle Traffic Accidents"),
+          hr(),
 
           h3("Number of Traffic Accidents per Hour of Day"),
           h4("What time of day is it most dangerous to drive in Seattle?"),
@@ -156,7 +157,10 @@ my_ui <- fluidPage(
           plotOutput("acc_graph_one", click = "plot_click_time"),
           p(strong("Time: "), textOutput("select_time_one", inline = TRUE)),
           p(strong("Number of Accidents: "), textOutput("freq", inline = TRUE)),
-          textOutput("acc_time_description"),
+          p(strong("Note: "), "The frequency of traffic accidents for each hour of day
+            is the cumulative sum of traffic accidents for that hour in the last five
+            years."),
+          hr(),
 
           h3("Seattle District Mapping of Accidents"),
           h4("Where is it most dangerous to drive in Seattle?"),
@@ -166,6 +170,26 @@ my_ui <- fluidPage(
           p(strong("Number of Accidents: "), textOutput("num_selected", inline = TRUE)),
           p(strong("Hundred Block Location: "), textOutput("location", inline = TRUE)),
           p(strong("Time(s): "), textOutput("select_time_two", inline = TRUE)),
+          p(textOutput("graph_descriptions")),
+          p(strong("Note: "), "In this analysis, \"traffic accidents\" are defined as", 
+            em("collisions.")),
+          
+          hr(),
+          h3("\"When\" Analysis"),
+          p(textOutput("acc_time_analysis")),
+          p("When considering every district in Seattle, the most dangerous times to
+            drive are within hour 19 (between 7:00 PM and 8:00 PM) and hour 11 (between 
+            11:00 AM and 12:00 PM). These peaks correspond to the end of rush hour in 
+            Seattle. The frequency of crashes in hour 19 is much higher than any other
+            time of day, with a count of 260 accidents. The safest hour of day to drive is 
+            hour 5, with only 9 accidents recorded in the last five years. Traffic accident 
+            frequency increases after this time until hour 11, which holds the second highest 
+            number of accidents.", strong("This analysis indicates that traveling before 
+            and after rush hour is the safest time to travel.")),
+          
+          hr(),
+          h3("\"Where\" Analysis"),
+          
 
 
           h3("Reference: Districts of Seattle"),
@@ -194,5 +218,6 @@ my_ui <- fluidPage(
     )
   )
 )
+
 
 shinyUI(my_ui)

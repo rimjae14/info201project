@@ -186,6 +186,18 @@ my_server <- function(input, output) {
     count(filtered_acc_plot(), vars = time.round)
   })
   
+  acc_plot_one_min <- reactive({
+    min_val <- filtered_acc_plot_one() %>% 
+      filter(n == min(filtered_acc_plot_one()$n))
+    min_val$vars
+  })
+  
+  acc_plot_one_max <- reactive({
+    max_val <- filtered_acc_plot_one() %>% 
+      filter(n == max(filtered_acc_plot_one()$n))
+    max_val$vars
+  })
+  
   q4data <- reactiveValues()
   
   # click interaction: graph one
@@ -223,11 +235,23 @@ my_server <- function(input, output) {
     q4data$selected_freq
   })
     
-  output$acc_time_description <- renderText({
-    paste(
-      "This analysis is done given the range of time between ", input$time[1],
-      "and", input$time[2], "times of day (hour.minute), and the following district(s):",
+  
+  
+  output$graph_descriptions <- renderText({
+    paste0(
+      "This analysis is done given the range of time between ", floor(input$time[1]),
+      " and ", floor(input$time[2]), " hours of the day, and the following district(s): ",
       paste(input$district, collapse = ", "), "."
+    )
+  })
+  
+  output$acc_time_analysis <- renderText({
+    paste0(
+      "According to the graph, the most dangerous time of day to drive for the given
+      district(s) is hour ", acc_plot_one_min(), " and the least dangerous 
+      time of day to drive is hour ", acc_plot_one_max(), ". Using this
+      information, it is best to avoid driving in the given district(s) within hour ",
+      acc_plot_one_max(), "!"
     )
   })
   
