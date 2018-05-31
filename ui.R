@@ -142,47 +142,42 @@ my_ui <- fluidPage(
         )
       )
     ),
-    tabPanel(
-      "Part 3",
-      titlePanel("Crime Frequency"),
-      sidebarLayout(
-        sidebarPanel(
-          sliderInput("year",
-            "Choose a year:",
-            min = 2014,
-            max = 2018,
-            value = 2016,
-            sep = ""
-          ),
-          selectInput("crime_type",
-            "Select a crime",
-            choices = list("Crimes" = c(
-              "ASSAULTS", "SHOPLIFTING", "BURGLARY",
-              "PROPERTY DAMAGE", "PROSTITUTION", "ROBBERY",
-              "AUTO THEFTS", "THREATS, HARASSMENT", "TRESPASS"
-            ))
-          )
-        ),
-        mainPanel(
-          tabsetPanel(
-            type = "tabs",
-            tabPanel(
-              "Plot",
-              h1("Crime Frequency Map"),
-              textOutput("plot_description"),
-              plotOutput("map", click = "plot_click"),
-              verbatimTextOutput("info"),
-              p(strong("District:"), textOutput("district_point", inline = TRUE)),
-              p(strong("Frequency:"), textOutput("frequency_district", inline = TRUE)),
-              br(),
-              textOutput("plot_interactive"),
-              leafletOutput("interactive_map"),
-              p(strong("5 Districts With The Most Crimes:"), tableOutput("most_dangerous")),
-              p(strong("5 Districts With The Least Crimes:"), tableOutput("most_safe"))
-            )
-          )
-        )
-      )
+    tabPanel("Areas of Crime",
+             sidebarLayout(
+               sidebarPanel(
+                 sliderInput('year',
+                             "Choose a year:",
+                             min = 2014,
+                             max = 2018,
+                             value = 2016,
+                             sep = ""),
+                 selectInput('crime_type',
+                             "Select a crime",
+                             choices = list('Crimes' = c("ASSAULTS", "BURGLARY",
+                                                         "PROPERTY DAMAGE", "PROSTITUTION", "ROBBERY",
+                                                         "NARCOTICS COMPLAINTS", "TRESPASS", "HOMICIDE")))
+               ),
+               mainPanel(
+                 h1("Crime Frequency Maps"),
+                 textOutput("plot_description"),
+                 plotOutput('map', click = "plot_click"),
+                 verbatimTextOutput("info"),
+                 p(strong("District:"), textOutput("district_point", inline = TRUE)),
+                 p(strong("Frequency:"), textOutput("frequency_district", inline = TRUE)),
+                 br(),
+                 textOutput("plot_interactive"),
+                 leafletOutput('interactive_map'),
+                 p(strong("5 Districts With The Most Crimes:"), tableOutput("most_dangerous")),
+                 p(strong("5 Districts With The Least Crimes:"), tableOutput("most_safe")),
+                 br(),
+                 h1("Selected Crime/Year Analysis"),
+                 textOutput("selected_analysis"),
+                 br(),
+                 h1("Overall Analysis"),
+                 textOutput("overall_analysis"),
+                 br()
+               )
+             )
     ),
     tabPanel("Car Accidents",
       sidebarLayout(
@@ -200,6 +195,7 @@ my_ui <- fluidPage(
         ),
         mainPanel(
           h1("Seattle Traffic Accidents"),
+          hr(),
 
           h3("Number of Traffic Accidents per Hour of Day"),
           h4("What time of day is it most dangerous to drive in Seattle?"),
@@ -207,7 +203,10 @@ my_ui <- fluidPage(
           plotOutput("acc_graph_one", click = "plot_click_time"),
           p(strong("Time: "), textOutput("select_time_one", inline = TRUE)),
           p(strong("Number of Accidents: "), textOutput("freq", inline = TRUE)),
-          textOutput("acc_time_description"),
+          p(strong("Note: "), "The frequency of traffic accidents for each hour of day
+            is the cumulative sum of traffic accidents for that hour in the last five
+            years."),
+          hr(),
 
           h3("Seattle District Mapping of Accidents"),
           h4("Where is it most dangerous to drive in Seattle?"),
@@ -217,8 +216,40 @@ my_ui <- fluidPage(
           p(strong("Number of Accidents: "), textOutput("num_selected", inline = TRUE)),
           p(strong("Hundred Block Location: "), textOutput("location", inline = TRUE)),
           p(strong("Time(s): "), textOutput("select_time_two", inline = TRUE)),
+          p(textOutput("graph_descriptions")),
+          p(strong("Note: "), "In this analysis, \"traffic accidents\" are defined as", 
+            em("collisions."), "Additionally, time(s) listed above are in the format of",
+            em("\"hour.minute\""), "."),
+          
+          hr(),
+          h3("\"When\" Analysis"),
+          p(textOutput("acc_time_analysis")),
+          p("When considering every district in Seattle, the most dangerous times to
+            drive are within hour 19 (between 7:00 PM and 8:00 PM) and hour 11 (between 
+            11:00 AM and 12:00 PM). These peaks correspond to the end of rush hour in 
+            Seattle. The frequency of crashes in hour 19 is much higher than any other
+            time of day, with a count of 260 accidents. The safest hour of day to drive is 
+            hour 5, with only 9 accidents recorded in the last five years. Traffic accident 
+            frequency increases after this time until hour 11, which holds the second highest 
+            number of accidents.", strong("This analysis indicates that traveling before 
+            and after rush hour is the safest time to travel.")),
+          
+          hr(),
+          h3("\"Where\" Analysis"),
+          p("This longitudinal and latitudinal graph depicts the concentration of traffic 
+            accidents in Seattle. When considering every district in Seattle, ", strong("the
+            most dangerous area to drive is surrounding downtown Seattle"), ", most likely 
+            due to the large numbers of individuals who commute to work there. This accident 
+            concentration data juxtaposed with our \"When\" analysis, provides the insight
+            that", strong("locations and times in which there is high traffic of commuting (rush hour
+            times and locations), are also the locations and times in which there are the 
+            highest levels of car accidents, and therefore the most dangerous areas and
+            times to drive in Seattle.")
+            ),
+          p("For reference between district and city location, see below. For more detailed 
+            explanatory maps, see the \"Reference\" tab above."),
 
-
+          hr(),
           h3("Reference: Districts of Seattle"),
           img(
             src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/Southwest_Precinct.pdf",
@@ -245,5 +276,6 @@ my_ui <- fluidPage(
     )
   )
 )
+
 
 shinyUI(my_ui)

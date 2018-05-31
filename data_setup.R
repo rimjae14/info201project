@@ -86,7 +86,31 @@ major_crime_data <- data %>%
 min_year <- min(as.numeric(data$year), na.rm = TRUE)
 max_year <- max(as.numeric(data$year), na.rm = TRUE)
 
+#QUESTION 3
+criminal_data <- data %>%
+  filter(Event.Clearance.Group == major_crimes)
+crime_rate_data <- criminal_data %>%
+  group_by(year) %>%
+  summarize(
+    total_crimes = nrow(data[year, ])
+  )
+crime_rate <- round(sum(crime_rate_data[, 'total_crimes'])/nrow(crime_rate_data))
 
+district_crimes <- criminal_data %>%
+  group_by(District.Sector) %>%
+  summarize(
+    total_crimes = nrow(data[District.Sector, ])
+  )
+
+max_crime <- max(district_crimes$total_crimes)
+max_district <- district_crimes %>%
+  filter(total_crimes == max(total_crimes)) %>%
+  select(District.Sector)
+
+min_crime <- min(district_crimes$total_crimes)
+min_district <- district_crimes %>%
+  filter(total_crimes == min(total_crimes)) %>%
+  select(District.Sector)
 
 # QUESTION 4
 accident_data <- data %>%
