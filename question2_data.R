@@ -42,10 +42,12 @@ south_crimes <- car_crimes %>%
   select(Event.Clearance.Group, District.Sector, sea_precinct, time)
 
 sector_data <- rbind(north_crimes, south_crimes, east_crimes, west_crimes, southwest_crimes)
+  
+sum <- sector_data %>%
+  group_by(round(time)) %>%
+  summarize(min = min(time))
 
-hour23 <- sector_data %>%
-  filter(round(time) == 23)
+View(sum)
 
-hour23plot <- ggplot(data = hour23) + 
-  geom_bar(mapping = aes(x = sea_precinct))
 
+  

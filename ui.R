@@ -81,13 +81,64 @@ my_ui <- fluidPage(
       sidebarLayout(
         sidebarPanel(
           h3("Control - Hour"),
-          sliderInput("q2hour", "Hour - Military time", min = 1, max = 24, value = 1)
+          sliderInput("q2hour", "Hour - Military time", min = 1, max = 24, value = 1),
+          radioButtons("q2district", "District", 
+                       c("North Precinct" = "north",
+                         "South Precinct" = "south",
+                         "Southwest Precinct" = "southwest",
+                         "East Precinct" = "east",
+                         "West Precinct" = "west"))
         ),
         mainPanel(
           # plot
-          plotOutput("question2graph")
+          h1("Auto Related Crimes in Seattle"),
+          h3("How many auto thefts and car prowls happen in each district in various hours?"),
+          plotOutput("question2graph"),
           # insert image of precinct and district
+          tableOutput("q2table"),
+          h3("Analysis of Data"),
+          p("This is the data for auto related incidents in the Seattle area. By auto incidents, 
+            I am including auto thefts and car prowling, which is when windows are smashed and valuables
+            inside the car is stolen. From the graph, no matter the hour, the North precincnt reports the 
+            highest number of auto related incidents in the area. The North Precinct comprises of some of
+            the most population dense districts such as Nora, Lincoln, Union, John, and Bay. It is also
+            the largest area of the 5 precincts. The West precinct reports a similar high numbers of auto 
+            related incidents. The West precinct comprises of Queen, David, Mary, King and in this 
+            report, the headquarter as well. The least number of auto related incidents happen in the 
+            Southwest precinct. It is only comprised of William and Frank districts and the number of 
+            auto related incidents are relatively steady across all hours. The East precicnt is the third
+            highes number of auto related incidents. It is comprised of Charlie, George and Edward. The 
+            last precinct is South precinct, which is comprised of Sam, Robert and Ocean. Map of these
+            precincts and districts are available below"),
+          hr(),
+          p("There are constantly auto related incidents throughout all hours in the Seattle area, but 
+            from the bar chart we can see that there are certain hours that the incident spikes up such as
+            around and after midnight. But for West precicnt, the number rises in the afternoon around
+            3-5pm rather than at night. All the precincts report the a similar low number around 120's at
+            4am. The North precicnt reports the highest number of 926 reports at 11am. Keep in mind that 
+            this is when the car was discovered to be in trouble, not when the actual crime was happening.
+            The lowest number of incidents reported is at Southwest precinct at 1am at 51 reports. At the 
+            same time, North precinct reported 256 incidents, East precinct, 111, South precinct, 123,
+            West precinct, 235."),
+          hr(),
+          h3("Reference: Districts of Seattle"),
+          img(
+            src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/Southwest_Precinct.pdf",
+            width = "250", height = "285", inline = TRUE),
+          img(
+            src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/WestPrecinct.pdf",
+            width = "252", height = "285", inline = TRUE),
+          img(
+            src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/North_Precinct.pdf",
+            width = "252", height = "285", inline = TRUE),
+          img(
+            src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/East_Precinct.pdf",
+            width = "252", height = "285", inline = TRUE),
+          img(
+            src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/South_Precinct.pdf",
+            width = "252", height = "285", inline = TRUE)
           # analysis
+        
         )
       )
     ),

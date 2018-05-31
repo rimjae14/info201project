@@ -60,7 +60,7 @@ my_server <- function(input, output) {
   
   #################### Question 2 ####################
   ####################################################
-  question2 <- reactive({
+  question2graph1 <- reactive({
     numhour <- as.numeric(input$q2hour)
     filtered_data <- sector_data %>%
       filter(round(time) == numhour)
@@ -68,12 +68,22 @@ my_server <- function(input, output) {
     return(filtered_data)
   })
   
+  output$q2table <- renderTable({
+    numhour <- as.numeric(input$q2hour)
+    tableq2 <- question2graph1() %>%
+      group_by(sea_precinct) %>%
+      summarize(count = n())
+    
+    return(tableq2)
+  })
+  
   output$question2graph <- renderPlot({
-    p <- ggplot(data = question2()) +
-      geom_bar(mapping = aes(x = sea_precinct, color = sea_precinct)) +
-      labs(title = "Auto Related Crimes in Seattle by Hour",
-           x = "Precincts",
-           y = "Count")
+    p <- ggplot(data = question2graph1()) +
+      geom_bar(mapping = aes(x = sea_precinct, fill = sea_precinct)) +
+      labs(x = "Precincts", y = "Count") +
+      scale_fill_manual("legend", values = c("east" = "blue", "north" = "purple",
+                                             "west" = "green", "south" = "red",
+                                             "southwest" = "yellow"))
     
     return(p)
   })
