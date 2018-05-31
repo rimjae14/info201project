@@ -22,8 +22,8 @@ my_server <- function(input, output) {
         filter(year >= input$year[1] &
                  year <= input$year[2])
     }
-    if (!is.null(input$district)) {
-      filtered <- filtered %>% filter(District.Sector %in% input$district)
+    if (!is.null(input$q1district)) {
+      filtered <- filtered %>% filter(District.Sector %in% input$q1district)
     }
     filtered
   })
@@ -40,7 +40,7 @@ my_server <- function(input, output) {
   output$controls <- renderUI({
     tagList(
       sliderInput("year", "Year Range", value = c(min_year + 1, max_year - 1), min = min_year, max = max_year),
-      selectizeInput("district", label = "Select District", choices = unique_districts, options = list(maxItems = 5))
+      selectizeInput("q1district", label = "Select District", choices = unique_districts, options = list(maxItems = 5))
     )
   })
   
