@@ -60,6 +60,7 @@ my_server <- function(input, output) {
   
   #################### Question 2 ####################
   ####################################################
+  
   question2graph1 <- reactive({
     numhour <- as.numeric(input$q2hour)
     filtered_data <- sector_data %>%
@@ -68,6 +69,7 @@ my_server <- function(input, output) {
     return(filtered_data)
   })
   
+  #Prints a table of different precincts and their auto incidents according to input hour
   output$q2table <- renderTable({
     numhour <- as.numeric(input$q2hour)
     tableq2 <- question2graph1() %>%
@@ -77,6 +79,7 @@ my_server <- function(input, output) {
     return(tableq2)
   })
   
+  #Makes the bar graph of different precincts and their auto according to input hour
   output$question2graph <- renderPlot({
     p <- ggplot(data = question2graph1()) +
       geom_bar(mapping = aes(x = sea_precinct, fill = sea_precinct)) +

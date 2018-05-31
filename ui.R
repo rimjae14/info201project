@@ -54,6 +54,8 @@ my_ui <- fluidPage(
       "here.",
       href = "https://data.seattle.gov/Public-Safety/Seattle-Police-Department-911-Incident-Response/3k2p-39jp"
     ))),
+    
+    ### Question 1 - Yodae Lim ###
     tabPanel("Crime Over Time",
       sidebarLayout(
         sidebarPanel(
@@ -114,6 +116,8 @@ my_ui <- fluidPage(
         )
       )
     ),
+    
+    ### Question 2 - Jae Rim ###
     tabPanel("Auto Crimes",
       sidebarLayout(
         sidebarPanel(
@@ -179,6 +183,8 @@ my_ui <- fluidPage(
         )
       )
     ),
+    
+    ### Question 3 - Lena Duong ###
     tabPanel("Areas of Crime",
              sidebarLayout(
                sidebarPanel(
@@ -216,6 +222,8 @@ my_ui <- fluidPage(
                )
              )
     ),
+    
+    ### Question 4 - Meghan Frisch ###
     tabPanel("Car Accidents",
       sidebarLayout(
         sidebarPanel(
