@@ -172,7 +172,8 @@ my_ui <- fluidPage(
           p(strong("Time(s): "), textOutput("select_time_two", inline = TRUE)),
           p(textOutput("graph_descriptions")),
           p(strong("Note: "), "In this analysis, \"traffic accidents\" are defined as", 
-            em("collisions.")),
+            em("collisions."), "Additionally, time(s) listed above are in the format of",
+            em("\"hour.minute\""), "."),
           
           hr(),
           h3("\"When\" Analysis"),
@@ -189,9 +190,20 @@ my_ui <- fluidPage(
           
           hr(),
           h3("\"Where\" Analysis"),
-          
+          p("This longitudinal and latitudinal graph depicts the concentration of traffic 
+            accidents in Seattle. When considering every district in Seattle, ", strong("the
+            most dangerous area to drive is surrounding downtown Seattle"), ", most likely 
+            due to the large numbers of individuals who commute to work there. This accident 
+            concentration data juxtaposed with our \"When\" analysis, provides the insight
+            that", strong("locations and times in which there is high traffic of commuting (rush hour
+            times and locations), are also the locations and times in which there are the 
+            highest levels of car accidents, and therefore the most dangerous areas and
+            times to drive in Seattle.")
+            ),
+          p("For reference between district and city location, see below. For more detailed 
+            explanatory maps, see the \"Reference\" tab above."),
 
-
+          hr(),
           h3("Reference: Districts of Seattle"),
           img(
             src = "https://www.seattle.gov/Documents/Departments/police/Precincts/maps/Southwest_Precinct.pdf",
