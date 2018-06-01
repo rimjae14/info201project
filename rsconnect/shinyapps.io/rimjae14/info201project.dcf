@@ -5,8 +5,8 @@ account: rimjae14
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 351594
-bundleId: 1403401
+bundleId: 1404134
 url: https://rimjae14.shinyapps.io/info201project/
-when: 1527798531.96543
+when: 1527814381.33981
 asMultiple: FALSE
 asStatic: FALSE

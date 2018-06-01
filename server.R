@@ -1,6 +1,3 @@
-library(shiny)
-library(dplyr)
-
 # Question 2 set up
 source("question2_data.R")
 
@@ -79,11 +76,27 @@ my_server <- function(input, output) {
     return(tableq2)
   })
   
+  output$hourgraph <- renderPlot({
+    filterdata <- sector_data %>%
+      filter(sea_precinct == input$q2district) %>%
+      group_by(round(time)) %>%
+      mutate(count = n())
+    
+    q <- ggplot(data = filterdata) +
+      geom_point(mapping = aes(x = round(time), y = count), color = "blue") +
+      geom_smooth(mapping = aes(x = round(time), y = count)) + 
+      labs(title = paste(input$q2district, "Precinct and number of reports by hour"),
+           x = "Hour", y = "Count of incidents")
+    
+    return(q)
+  })
+  
   #Makes the bar graph of different precincts and their auto according to input hour
   output$question2graph <- renderPlot({
     p <- ggplot(data = question2graph1()) +
       geom_bar(mapping = aes(x = sea_precinct, fill = sea_precinct)) +
-      labs(x = "Precincts", y = "Count") +
+      labs(title = "Precincts reporting auto incidents by hour",
+        x = "Precincts", y = "Count") +
       scale_fill_manual("legend", values = c("east" = "blue", "north" = "purple",
                                              "west" = "green", "south" = "red",
                                              "southwest" = "yellow"))
